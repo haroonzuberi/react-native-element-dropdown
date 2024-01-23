@@ -68,4 +68,5 @@ export interface DropdownProps<T> {
   onChangeText?: (search: string) => void;
   onConfirmSelectItem?: (item: T) => void;
   onAddNewButtonClick?: (value: string) => void;
+  onAddNewProduct?: (searchText: string) => void;
 }

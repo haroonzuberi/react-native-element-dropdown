@@ -30,6 +30,7 @@ import { useDeviceOrientation } from '../../useDeviceOrientation';
 import CInput from '../TextInput';
 import { DropdownProps } from './model';
 import { styles } from './styles';
+import { Pressable } from 'react-native';
 
 const { isTablet } = useDetectDevice;
 const ic_down = require('../../assets/down.png');
@@ -54,6 +55,7 @@ const DropdownComponent: <T>(
       itemContainerStyle,
       itemTextStyle,
       inputSearchStyle,
+      onAddNewProduct,
       iconStyle,
       selectedTextProps = {},
       data = [],
@@ -492,6 +494,7 @@ const DropdownComponent: <T>(
                   setSearchCallbackText(e);
                   onChangeText(e);
                 }
+                setSearchText(e);
                 onSearch(e);
               }}
               placeholderTextColor="gray"
@@ -519,53 +522,62 @@ const DropdownComponent: <T>(
     const _renderList = useCallback(
       (isTopPosition: boolean) => {
         const isInverted = !inverted ? false : isTopPosition;
-
         const _renderListHelper = () => {
           return (
             <>
-              <FlatList
-                testID={testID + ' flatlist'}
-                accessibilityLabel={accessibilityLabel + ' flatlist'}
-                {...flatListProps}
-                keyboardShouldPersistTaps="handled"
-                ref={refList}
-                onScrollToIndexFailed={scrollIndex}
-                data={listData}
-                inverted={isTopPosition ? inverted : false}
-                renderItem={_renderItem}
-                keyExtractor={(_item, index) => index.toString()}
-                showsVerticalScrollIndicator={showsVerticalScrollIndicator}
-              />
-              {showAddNewButton && (
-                <TouchableHighlight
-                  underlayColor={activeColor}
-                  onPress={() => {
-                    if (onAddNewButtonClick) {
-                      if (search) {
-                        onAddNewButtonClick(searchCallbackText);
-                      }
-                    }
-                  }}
+              {listData.length > 0 ? (
+                <>
+                  <FlatList
+                    testID={testID + ' flatlist'}
+                    accessibilityLabel={accessibilityLabel + ' flatlist'}
+                    {...flatListProps}
+                    keyboardShouldPersistTaps="handled"
+                    ref={refList}
+                    onScrollToIndexFailed={scrollIndex}
+                    data={listData}
+                    inverted={isTopPosition ? inverted : false}
+                    renderItem={_renderItem}
+                    keyExtractor={(_item, index) => index.toString()}
+                    showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+                  />
+                  {showAddNewButton && (
+                    <TouchableHighlight
+                      underlayColor={activeColor}
+                      onPress={() => {
+                        if (onAddNewButtonClick) {
+                          if (search) {
+                            onAddNewButtonClick(searchCallbackText);
+                          }
+                        }
+                      }}
+                    >
+                      <View style={StyleSheet.flatten([itemContainerStyle])}>
+                        <View style={styles.item}>
+                          <Text
+                            style={StyleSheet.flatten([
+                              styles.textItem,
+                              itemTextStyle,
+                              font(),
+                            ])}
+                          >
+                            Add New Product
+                          </Text>
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+                  )}
+                </>
+              ) : (
+                <Pressable
+                  style={styles.pressableParent}
+                  onPress={() => onAddNewProduct && onAddNewProduct(searchText)}
                 >
-                  <View style={StyleSheet.flatten([itemContainerStyle])}>
-                    <View style={styles.item}>
-                      <Text
-                        style={StyleSheet.flatten([
-                          styles.textItem,
-                          itemTextStyle,
-                          font(),
-                        ])}
-                      >
-                        Add New Product
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableHighlight>
+                  <Text style={styles.directBlackColor}>Add new Item</Text>
+                </Pressable>
               )}
             </>
           );
         };
-
         return (
           <TouchableWithoutFeedback>
             <View style={styles.flexShrink}>

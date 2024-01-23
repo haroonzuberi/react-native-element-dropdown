@@ -19,13 +19,13 @@ const DropdownScreen = (_props: any) => {
       >
         <Menu />
         <DropdownExample1 />
-        {/* <DropdownExample2 />
+        <DropdownExample2 />
         <DropdownWithConfirm />
         <DropdownLazyLoad />
         <CountrySelect1 />
         <CountrySelect2 />
         <MultiSelectAll />
-        <MultiSelectWithConfirm /> */}
+        <MultiSelectWithConfirm />
       </ScrollView>
     </View>
   );

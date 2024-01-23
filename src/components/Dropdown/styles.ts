@@ -27,6 +27,8 @@ export const styles = StyleSheet.create({
   wrapTop: {
     justifyContent: 'flex-end',
   },
+  pressableParent: { paddingHorizontal: '5%', paddingVertical: '2%' },
+  directBlackColor: { color: 'black' },
   dropdown: {
     flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row',
     justifyContent: 'space-between',
