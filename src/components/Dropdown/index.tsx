@@ -43,6 +43,8 @@ const DropdownComponent: <T>(
     const orientation = useDeviceOrientation();
     const {
       testID,
+      showAddNewButton,
+      onAddNewButtonClick,
       itemTestIDField,
       onChange,
       style = {},
@@ -98,6 +100,7 @@ const DropdownComponent: <T>(
     const [position, setPosition] = useState<any>();
     const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
     const [searchText, setSearchText] = useState('');
+    const [searchCallbackText, setSearchCallbackText] = useState('');
 
     const { width: W, height: H } = Dimensions.get('window');
     const styleContainerVertical: ViewStyle = useMemo(() => {
@@ -126,6 +129,7 @@ const DropdownComponent: <T>(
       setListData([...data]);
       if (searchText) {
         onSearch(searchText);
+        // setSearchCallbackText(searchText);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data, searchText]);
@@ -467,6 +471,7 @@ const DropdownComponent: <T>(
           return renderInputSearch((text) => {
             if (onChangeText) {
               setSearchText(text);
+              setSearchCallbackText(text);
               onChangeText(text);
             }
             onSearch(text);
@@ -484,6 +489,7 @@ const DropdownComponent: <T>(
               onChangeText={(e) => {
                 if (onChangeText) {
                   setSearchText(e);
+                  setSearchCallbackText(e);
                   onChangeText(e);
                 }
                 onSearch(e);
@@ -516,19 +522,47 @@ const DropdownComponent: <T>(
 
         const _renderListHelper = () => {
           return (
-            <FlatList
-              testID={testID + ' flatlist'}
-              accessibilityLabel={accessibilityLabel + ' flatlist'}
-              {...flatListProps}
-              keyboardShouldPersistTaps="handled"
-              ref={refList}
-              onScrollToIndexFailed={scrollIndex}
-              data={listData}
-              inverted={isTopPosition ? inverted : false}
-              renderItem={_renderItem}
-              keyExtractor={(_item, index) => index.toString()}
-              showsVerticalScrollIndicator={showsVerticalScrollIndicator}
-            />
+            <>
+              <FlatList
+                testID={testID + ' flatlist'}
+                accessibilityLabel={accessibilityLabel + ' flatlist'}
+                {...flatListProps}
+                keyboardShouldPersistTaps="handled"
+                ref={refList}
+                onScrollToIndexFailed={scrollIndex}
+                data={listData}
+                inverted={isTopPosition ? inverted : false}
+                renderItem={_renderItem}
+                keyExtractor={(_item, index) => index.toString()}
+                showsVerticalScrollIndicator={showsVerticalScrollIndicator}
+              />
+              {showAddNewButton && (
+                <TouchableHighlight
+                  underlayColor={activeColor}
+                  onPress={() => {
+                    if (onAddNewButtonClick) {
+                      if (search) {
+                        onAddNewButtonClick(searchCallbackText);
+                      }
+                    }
+                  }}
+                >
+                  <View style={StyleSheet.flatten([itemContainerStyle])}>
+                    <View style={styles.item}>
+                      <Text
+                        style={StyleSheet.flatten([
+                          styles.textItem,
+                          itemTextStyle,
+                          font(),
+                        ])}
+                      >
+                        Add New Product
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableHighlight>
+              )}
+            </>
           );
         };
 

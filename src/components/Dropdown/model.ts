@@ -19,6 +19,7 @@ export interface DropdownProps<T> {
     | null
     | undefined;
   testID?: string;
+  showAddNewButton?: boolean;
   itemTestIDField?: string;
   style?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
@@ -66,4 +67,5 @@ export interface DropdownProps<T> {
   searchQuery?: (keyword: string, labelValue: string) => boolean;
   onChangeText?: (search: string) => void;
   onConfirmSelectItem?: (item: T) => void;
+  onAddNewButtonClick?: (value: string) => void;
 }

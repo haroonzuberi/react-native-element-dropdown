@@ -30,10 +30,17 @@ const DropdownComponent = () => {
     return null;
   };
 
+  const addNewItem = (value: string) => {
+    console.log("Search query:", value);
+  }
+
   return (
     <View style={styles.container}>
       {renderLabel()}
       <Dropdown
+        showAddNewButton={true}
+        onAddNewButtonClick={addNewItem}
+        onChangeText={() => {}}
         style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
