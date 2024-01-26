@@ -27,13 +27,16 @@ import {
 } from 'react-native';
 import { useDetectDevice } from '../../toolkits';
 import { useDeviceOrientation } from '../../useDeviceOrientation';
-import CInput from '../TextInput';
 import { DropdownProps } from './model';
 import { styles } from './styles';
 import { Pressable } from 'react-native';
+import { TextInput } from 'react-native';
+import { styles as TextInputStyles } from '../TextInput/styles';
+import { TouchableOpacity } from 'react-native';
 
-const { isTablet } = useDetectDevice;
+const ic_close = require('../../assets/close.png');
 const ic_down = require('../../assets/down.png');
+const { isTablet } = useDetectDevice;
 
 const statusBarHeight: number = StatusBar.currentHeight || 0;
 
@@ -95,6 +98,7 @@ const DropdownComponent: <T>(
     } = props;
 
     const ref = useRef<View>(null);
+    const searchInputRef = useRef<TextInput>(null);
     const refList = useRef<FlatList>(null);
     const [visible, setVisible] = useState<boolean>(false);
     const [currentValue, setCurrentValue] = useState<any>(null);
@@ -281,6 +285,11 @@ const DropdownComponent: <T>(
         setListData(data);
 
         if (!visible) {
+          // Open dropdown event
+          setTimeout(() => {
+            searchInputRef.current && searchInputRef.current.focus();
+          }, 200);
+
           if (onFocus) {
             onFocus();
           }
@@ -305,6 +314,7 @@ const DropdownComponent: <T>(
       scrollIndex,
       onFocus,
       onBlur,
+      searchInputRef.current,
     ]);
 
     const onSearch = useCallback(
@@ -366,6 +376,20 @@ const DropdownComponent: <T>(
         onSearch,
       ]
     );
+
+    const onSelectNewButton = useCallback(() => {
+      onAddNewProduct && onAddNewProduct(searchText);
+      let item: any = { label: searchText, value: searchText };
+      setCurrentValue(item);
+      eventClose();
+    }, [
+      confirmSelectItem,
+      eventClose,
+      onChange,
+      onChangeText,
+      onConfirmSelectItem,
+      searchText,
+    ]);
 
     const _renderDropdown = () => {
       const isSelected = currentValue && _.get(currentValue, valueField);
@@ -467,6 +491,24 @@ const DropdownComponent: <T>(
       ]
     );
 
+    const _renderRightIcon = () => {
+      if (searchText.length > 0) {
+        return (
+          <TouchableOpacity onPress={() => setSearchText('')}>
+            <Image
+              source={ic_close}
+              style={StyleSheet.flatten([
+                TextInputStyles.icon,
+                { tintColor: iconColor },
+                iconStyle,
+              ])}
+            />
+          </TouchableOpacity>
+        );
+      }
+      return null;
+    };
+
     const renderSearch = useCallback(() => {
       if (search) {
         if (renderInputSearch) {
@@ -480,26 +522,36 @@ const DropdownComponent: <T>(
           });
         } else {
           return (
-            <CInput
-              testID={testID + ' input'}
-              accessibilityLabel={accessibilityLabel + ' input'}
-              style={[styles.input, inputSearchStyle]}
-              inputStyle={[inputSearchStyle, font()]}
-              value={searchText}
-              autoCorrect={false}
-              placeholder={searchPlaceholder}
-              onChangeText={(e) => {
-                if (onChangeText) {
-                  setSearchText(e);
-                  setSearchCallbackText(e);
-                  onChangeText(e);
-                }
-                setSearchText(e);
-                onSearch(e);
-              }}
-              placeholderTextColor="gray"
-              iconStyle={[{ tintColor: iconColor }, iconStyle]}
-            />
+            <TouchableWithoutFeedback>
+              <View style={[styles.input, inputSearchStyle]}>
+                <View style={TextInputStyles.textInput}>
+                  <TextInput
+                    testID={testID + ' input'}
+                    accessibilityLabel={accessibilityLabel + ' input'}
+                    style={StyleSheet.flatten([
+                      TextInputStyles.textInput,
+                      inputSearchStyle,
+                      font(),
+                    ])}
+                    value={searchText}
+                    autoCorrect={false}
+                    placeholder={searchPlaceholder}
+                    onChangeText={(e) => {
+                      if (onChangeText) {
+                        setSearchText(e);
+                        setSearchCallbackText(e);
+                        onChangeText(e);
+                      }
+                      setSearchText(e);
+                      onSearch(e);
+                    }}
+                    placeholderTextColor="gray"
+                    ref={searchInputRef}
+                  />
+                  {_renderRightIcon()}
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
           );
         }
       }
@@ -544,11 +596,12 @@ const DropdownComponent: <T>(
                     <TouchableHighlight
                       underlayColor={activeColor}
                       onPress={() => {
-                        if (onAddNewButtonClick) {
-                          if (search) {
-                            onAddNewButtonClick(searchCallbackText);
-                          }
-                        }
+                        // if (onAddNewButtonClick) {
+                        //   if (search) {
+                        //     onAddNewButtonClick(searchCallbackText);
+                        //   }
+                        // }
+                        onSelectNewButton()
                       }}
                     >
                       <View style={StyleSheet.flatten([itemContainerStyle])}>
@@ -570,7 +623,7 @@ const DropdownComponent: <T>(
               ) : (
                 <Pressable
                   style={styles.pressableParent}
-                  onPress={() => onAddNewProduct && onAddNewProduct(searchText)}
+                  onPress={() => onSelectNewButton()}
                 >
                   <Text style={styles.directBlackColor}>Add new Item</Text>
                 </Pressable>

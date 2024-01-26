@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Image,
   TextInput,
@@ -37,6 +37,7 @@ const TextInputComponent: CTextInput = (props) => {
   } = props;
 
   const [text, setText] = useState<string>('');
+  const inputRef = useRef(null);
 
   useEffect(() => {
     if (value) {
@@ -91,6 +92,7 @@ const TextInputComponent: CTextInput = (props) => {
             placeholder={placeholder}
             placeholderTextColor={placeholderTextColor}
             onChangeText={onChange}
+            ref={inputRef}
           />
           {_renderRightIcon()}
         </View>

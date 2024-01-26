@@ -18,6 +18,16 @@ const data = [
 const DropdownComponent = () => {
   const [value, setValue] = useState<string>();
   const [isFocus, setIsFocus] = useState(false);
+  const [items, setItems] = useState([
+    { label: 'Item 1', value: '1', search: 'Item 1' },
+    { label: 'Item 2', value: '2', search: 'Item 2' },
+    { label: 'Item 3', value: '3', search: 'Item 3' },
+    { label: 'Item 4', value: '4', search: 'Item 4' },
+    { label: 'Item 5', value: '5', search: 'Item 5' },
+    { label: 'Item 6', value: '6', search: 'Item 6' },
+    { label: 'Item 7', value: '7', search: 'Item 7' },
+    { label: 'Item 8', value: '8', search: 'Item 8' },
+  ]);
 
   const renderLabel = () => {
     if (value || isFocus) {
@@ -31,22 +41,24 @@ const DropdownComponent = () => {
   };
 
   const addNewItem = (value: string) => {
-    console.log("Search query:", value);
-  }
+    console.log('Search query:', value);
+    let item = { label: value, value: value, search: value };
+    items.push(item);
+  };
 
   return (
     <View style={styles.container}>
       {renderLabel()}
       <Dropdown
         showAddNewButton={true}
-        onAddNewButtonClick={addNewItem}
+        onAddNewProduct={addNewItem}
         onChangeText={() => {}}
         style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
         inputSearchStyle={styles.inputSearchStyle}
         iconStyle={styles.iconStyle}
-        data={data}
+        data={items}
         search
         maxHeight={300}
         minHeight={100}

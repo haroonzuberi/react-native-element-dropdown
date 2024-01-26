@@ -6,6 +6,7 @@ import type {
   TextStyle,
   ViewStyle,
 } from 'react-native';
+import { TextInput } from 'react-native';
 
 interface Props extends TextInputProps {
   fontFamily?: string;
