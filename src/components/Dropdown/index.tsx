@@ -135,7 +135,7 @@ const DropdownComponent: <T>(
       setListData([...data]);
       if (searchText) {
         onSearch(searchText);
-        // setSearchCallbackText(searchText);
+        setSearchCallbackText(searchText);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data, searchText]);
@@ -577,8 +577,6 @@ const DropdownComponent: <T>(
         const _renderListHelper = () => {
           return (
             <>
-              {listData.length > 0 ? (
-                <>
                   <FlatList
                     testID={testID + ' flatlist'}
                     accessibilityLabel={accessibilityLabel + ' flatlist'}
@@ -596,12 +594,18 @@ const DropdownComponent: <T>(
                     <TouchableHighlight
                       underlayColor={activeColor}
                       onPress={() => {
-                        // if (onAddNewButtonClick) {
-                        //   if (search) {
-                        //     onAddNewButtonClick(searchCallbackText);
-                        //   }
-                        // }
-                        onSelectNewButton()
+                        if (onAddNewButtonClick) {
+                          if (search) {
+                            console.log(searchCallbackText);
+                            
+                            onAddNewButtonClick(searchText);
+                            let item: any = { label: searchText, value: searchText };
+                            setCurrentValue(item);
+                            eventClose();
+
+                          }
+                        }
+                        // onSelectNewButton()
                       }}
                     >
                       <View style={StyleSheet.flatten([itemContainerStyle])}>
@@ -619,16 +623,7 @@ const DropdownComponent: <T>(
                       </View>
                     </TouchableHighlight>
                   )}
-                </>
-              ) : (
-                <Pressable
-                  style={styles.pressableParent}
-                  onPress={() => onSelectNewButton()}
-                >
-                  <Text style={styles.directBlackColor}>Add new Item</Text>
-                </Pressable>
-              )}
-            </>
+                </>      
           );
         };
         return (
@@ -769,3 +764,4 @@ const DropdownComponent: <T>(
   });
 
 export default DropdownComponent;
+
