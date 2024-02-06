@@ -602,7 +602,7 @@ const DropdownComponent: <T>(
                             let item: any = { label: searchText, value: searchText };
                             setCurrentValue(item);
                             eventClose();
-
+                            setSearchText('');
                           }
                         }
                         // onSelectNewButton()
